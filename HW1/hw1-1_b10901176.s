@@ -41,7 +41,7 @@ recurrence:
   sw ra, 0(sp)        # save return address for use afterwards
 
   li t0, 1            # t0 = 1
-  bgt a0, t0, else    # if a0 = 1 (saved in t0), jump to else
+  bgt a0, t0, else    # if a0 > 1 (saved in t0), jump to else
   # case n = 1
     addi a0, x0, 2    # set the returned value = 2 (saved in a0)
     addi sp, sp, 8    # restore stack pointer
