@@ -58,11 +58,11 @@ recurrence:
 
     add t2, t1, x0    # t2 = t1
     addi t0, x0, 6    # t0 = 6
-    mul t2, t2, t0     # t2 = t2 * 6 (t0 = 6)
+    mul t2, t2, t0    # t2 = t2 * 6 (t0 = 6)
     addi t0, x0, 4    # t0 = 4
     add t2, t2, t0    # t2 = t2 + 4 (t0 = 4)
     addi t0, x0, 5    # t0 = 5
-    mul a0, a0, t0     # a0 = a0 * 5 (a0 is now the returned value from the above recursive call, which is T(n/2) ,t0 = 5)
+    mul a0, a0, t0    # a0 = a0 * 5 (a0 is now the returned value from the above recursive call, which is T(n/2) ,t0 = 5)
     add a0, a0, t2    # a0 = a0 + t2
     jr ra             # return
 
