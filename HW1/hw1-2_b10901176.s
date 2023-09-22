@@ -55,7 +55,7 @@ __start:
   # Reads the input char array
     addi a0, x0, 8    # a0 = 8 means "read string" system call
     li a1, 0x10150    # load a1 with the string memory address
-    li a2, 2047   # a2 = 2047 means maxLength = 2047
+    li a2, 2047       # a2 = 2047 means maxLength = 2047
     ecall             # system call
 
   # Loads the address of the input string into a0
@@ -87,36 +87,36 @@ while_start:
   beqz t0, while_end  # if t0 is null, jump to while_end
 
   # character encrypting
-  li t1, 32
-  beq t0, t1, space   # if t0 = ' ' (' ' = 32), jump to space
+  li t1, 32           # t1 = 32, (' ' = 32)
+  beq t0, t1, space   # if t0 = ' ', jump to space
   
   # not a space => add shift
   add t0, t0, x16     # add the shift on t0
 
-  li t1, 122
+  li t1, 122          # t1 = 122, ('z' = 122)
   bgt t0, t1, much    # if t0 > 'z' ('z' = 122), jump to much
-  li t1, 97
-  blt t0, t1, less    # if t0 < 'a' ('a' = 97), jump to less
+  li t1, 97           # t1 = 97, ('a' = 97)
+  blt t0, t1, less    # if t0 < 'a', jump to less
   
   # case else
-  j next
+  j next              # do not need to modify t0, jump to next
 
   space:
   # case space
   addi a2, a2, 1      # a2 += 1
   add t0, x0, a2      # t0 = a2
   addi t0, t0, 48     # t0 += '0', convert integers into ASCII number
-  j next
+  j next              # jump to next
 
   much:
   # case much
-  addi t0, t0, -26
-  j next
+  addi t0, t0, -26    # t0 -= 26, fix t0 > 'z'
+  j next              # jump to next
 
   less:
   # case less
-  addi t0, t0, 26
-  j next
+  addi t0, t0, 26     # t0 += 26, fix t0 < 'a'
+  j next              # jump to next
 
   next:
   # character storing
