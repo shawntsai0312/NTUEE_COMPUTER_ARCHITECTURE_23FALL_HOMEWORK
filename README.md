@@ -1,7 +1,7 @@
 # Computer Architecture 23Fall
 ##### author : B10901176 蔡弘祥
 
-### Simulator : Jupiter
+#### Simulator : Jupiter
 * download link : https://github.com/andrescv/Jupiter
 #### Running Jupiter on Linux or macOS
 
