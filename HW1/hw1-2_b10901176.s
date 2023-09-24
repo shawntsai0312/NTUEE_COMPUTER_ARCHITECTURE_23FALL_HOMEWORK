@@ -85,14 +85,14 @@ while_start:
   # character reading
   lb t0, 0(a0)            # load t0 with the character pointed by a0
 
-#--------------------------- for GUI mode ---------------------------
-# please comment CLI mode
-  li t1, 10               # t1 = 10, ('\n' = 10)
-  beq t0, t1, while_end   # if t0 = 10, jump to while_end
+# #--------------------------- for GUI mode ---------------------------
+# # please comment CLI mode
+#   li t1, 10               # t1 = 10, ('\n' = 10)
+#   beq t0, t1, while_end   # if t0 = 10, jump to while_end
 
-# #--------------------------- for CLI mode ---------------------------
-# # please comment GUI mode
-#   beqz t0, while_end      # if t0 is null, jump to while_end
+#--------------------------- for CLI mode ---------------------------
+# please comment GUI mode
+  beqz t0, while_end      # if t0 is null, jump to while_end
 
   # character encrypting
   li t1, 32               # t1 = 32, (' ' = 32)
