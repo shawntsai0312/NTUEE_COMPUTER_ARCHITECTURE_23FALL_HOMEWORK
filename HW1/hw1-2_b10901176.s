@@ -78,10 +78,6 @@ main:
   j print_char            # jump to print_char
 
 while_start:
-  # stack init
-  # addi sp, sp ,-4         # adjust stack for an item
-  # sw ra, 0(sp)            # store return address into stack
-
   # character reading
   lb t0, 0(a0)            # load t0 with the character pointed by a0
 
@@ -134,9 +130,6 @@ while_start:
   j while_start           # jump to while_start
 
 while_end:
-  # clear stack
-  # lw ra, 0(sp)            # restore return address (back to main)
-  # addi sp, sp, 4          # restore stack pointer
   jr ra                   # return to main
 
   
