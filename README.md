@@ -16,3 +16,9 @@
 image\bin\jupiter # for GUI mode
 image\bin\jupiter [options] <files> # for CLI mode
 ```
+
+### HW 2 : Verilog ALU
+#### Before Simulation
+```shell
+source ./HW2/tool.sh
+```
