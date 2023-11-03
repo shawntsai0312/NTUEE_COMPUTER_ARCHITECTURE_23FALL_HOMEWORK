@@ -169,8 +169,6 @@ module ALU #(
                             end
                         end
                         out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
-                        // step final
-                        if(counter == DATA_W-1) out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
                     end
                     7: begin // case A / B
                         // temp2 is the left half of out
