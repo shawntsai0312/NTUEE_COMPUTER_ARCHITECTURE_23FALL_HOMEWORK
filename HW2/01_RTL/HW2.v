@@ -57,7 +57,7 @@ module ALU #(
     assign o_data = out;
 
     // The above lines cannot be added !!!
-    // We've already handle input in the "load input always block"
+    // We've already handled input in the "load input always block"
     // assign i_A = operand_a;
     // assign i_B = operand_b;
     // assign i_inst = inst;
