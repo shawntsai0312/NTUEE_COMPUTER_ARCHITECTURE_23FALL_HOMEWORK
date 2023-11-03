@@ -48,6 +48,8 @@ module ALU #(
     // output
     reg  [2*DATA_W-1: 0] out;
     reg  oDone, oDone_nxt;
+    // multicycle temp reg
+    reg  [2*DATA_W-1: 0] temp;
 
 // Wire Assignments
     // Todo
@@ -55,6 +57,7 @@ module ALU #(
     assign o_data = out;
 
     // The above lines cannot be added !!!
+    // We've already handle input in the below always block
     // assign i_A = operand_a;
     // assign i_B = operand_b;
     // assign i_inst = inst;
@@ -78,20 +81,20 @@ module ALU #(
         case(state)
             S_IDLE           : begin
                 if(i_valid) begin
-                    if(inst<=5)   state_nxt = S_ONE_CYCLE_OP;
-                    else            state_nxt = S_MULTI_CYCLE_OP;
+                    if(i_inst <= 5)     state_nxt = S_ONE_CYCLE_OP;
+                    else                state_nxt = S_MULTI_CYCLE_OP;
                 end
                 else    state_nxt = S_IDLE;
             end
             S_ONE_CYCLE_OP   : state_nxt = S_IDLE;
-            S_MULTI_CYCLE_OP : state_nxt = (counter == 31)? S_IDLE:S_MULTI_CYCLE_OP;
+            S_MULTI_CYCLE_OP : state_nxt = (counter == DATA_W-1)? S_IDLE : S_MULTI_CYCLE_OP;
             default : state_nxt = state;
         endcase
     end
     // Todo: Counter
     always @(*) begin
         if(state == S_MULTI_CYCLE_OP)   counter_nxt = counter + 1;
-        else                            counter = 0;
+        else                            counter_nxt = 0;
     end
 
     // Todo: ALU output
@@ -137,12 +140,30 @@ module ALU #(
                     5: begin // Shift A with B bits right
                         out[DATA_W-1:0] = $signed(operand_a[DATA_W-1:0]) >>> operand_b[DATA_W-1:0];
                     end
+                    default: out = 0;
                 endcase
             end
             S_MULTI_CYCLE_OP : begin
                 case(inst)
                     6: begin // case A * B
-                        shreg_nxt = 0;
+                        // shift then add (avoid overflowing)
+                        if(counter == 0) begin
+                            shreg_nxt = operand_b >> 1;
+                            if(operand_b[0]) begin
+                                temp = operand_a << DATA_W-1;
+                                shreg_nxt = shreg_nxt + temp;
+                            end
+                        end
+                        else begin
+                            shreg_nxt = shreg >> 1;
+                            if(shreg[0]) begin
+                                temp = operand_a << DATA_W-1;
+                                shreg_nxt = shreg_nxt + temp;
+                            end
+                        end
+                        if(counter == DATA_W-1) begin
+                            out = shreg_nxt;
+                        end
                     end
                     7: begin // case A / B
                         shreg_nxt = 0;    
@@ -158,7 +179,7 @@ module ALU #(
             S_IDLE           : oDone_nxt = 0;
             S_ONE_CYCLE_OP   : oDone_nxt = 1;
             S_MULTI_CYCLE_OP : begin
-                if(counter == 31)   oDone_nxt = 1;
+                if(counter == DATA_W-1)   oDone_nxt = 1;
                 else                oDone_nxt = 0;
             end
             default : oDone_nxt = 0;
