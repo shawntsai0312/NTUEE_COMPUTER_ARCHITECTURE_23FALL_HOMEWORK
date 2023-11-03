@@ -46,7 +46,6 @@ vcs ../00_TB/HW2_tb.v HW2.v -full64 -R -debug_access+all +v2k +notimingcheck +de
 
 ALU will execute addition
   
-
 #### How to Run
 ```shell
 source ./01_RTL/01_run.f
