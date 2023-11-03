@@ -36,20 +36,20 @@ module ALU #(
 // Wires & Regs
     // Todo
     // state
-    reg  [         1: 0] state, state_nxt; // remember to expand the bit width if you want to add more states!
+    reg  [         1: 0] state, state_nxt;  // remember to expand the bit width if you want to add more states!
     // load input
     reg  [  DATA_W-1: 0] operand_a, operand_a_nxt;
     reg  [  DATA_W-1: 0] operand_b, operand_b_nxt;
     reg  [         2: 0] inst, inst_nxt;
     // counter
     reg  [         4: 0] counter, counter_nxt;
-    // shift reg
+    // // shift reg
     reg  [2*DATA_W-1: 0] shreg, shreg_nxt;
     // output
-    reg  [2*DATA_W-1: 0] out;
+    reg  [2*DATA_W-1: 0] out, out_nxt;               // not a real register !!
     reg  oDone, oDone_nxt;
-    // multicycle temp reg
-    reg  [2*DATA_W-1: 0] temp;
+    // multicycle temp1 reg
+    reg  [2*DATA_W-1: 0] temp1, temp2;
 
 // Wire Assignments
     // Todo
@@ -57,7 +57,7 @@ module ALU #(
     assign o_data = out;
 
     // The above lines cannot be added !!!
-    // We've already handle input in the below always block
+    // We've already handle input in the "load input always block"
     // assign i_A = operand_a;
     // assign i_B = operand_b;
     // assign i_inst = inst;
@@ -98,107 +98,126 @@ module ALU #(
     end
 
     // Todo: ALU output
-    always @(*) begin 
+    always @(*) begin
+        out_nxt[2*DATA_W-1:0] = 0;
+        shreg_nxt[2*DATA_W-1:0] = 0;
         case(state)
             S_ONE_CYCLE_OP   : begin
                 case(inst)
                     0: begin // case A + B (s)
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] + operand_b[DATA_W-1:0];
+                        temp1[DATA_W-1:0] = operand_a[DATA_W-1:0] + operand_b[DATA_W-1:0];
                         if((operand_a[DATA_W-1]^operand_b[DATA_W-1])?
-                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
-                            case(out[DATA_W-1])
-                                0:  out = 32'h80000000;
-                                1:  out = 32'h7fffffff;
+                            0:(temp1[DATA_W-1]^operand_a[DATA_W-1])) begin
+                            case(temp1[DATA_W-1])
+                                0:  out_nxt[DATA_W-1:0] = 32'h80000000;
+                                1:  out_nxt[DATA_W-1:0] = 32'h7fffffff;
                             endcase
                         end
+                        else    out_nxt[DATA_W-1:0] = temp1[DATA_W-1:0];
                     end
                     1: begin // case A - B (s)
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0];
+                        temp1[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0];
                         if((operand_a[DATA_W-1]==operand_b[DATA_W-1])?
-                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
-                            case(out[DATA_W-1])
-                                0:  out = 32'h80000000;
-                                1:  out = 32'h7fffffff;
+                            0:(temp1[DATA_W-1]^operand_a[DATA_W-1])) begin
+                            case(temp1[DATA_W-1])
+                                0:  out_nxt[DATA_W-1:0] = 32'h80000000;
+                                1:  out_nxt[DATA_W-1:0] = 32'h7fffffff;
                             endcase
                         end
+                        else    out_nxt[DATA_W-1:0] = temp1[DATA_W-1:0];
                     end
                     2: begin // case A & B
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] & operand_b[DATA_W-1:0];
+                        out_nxt[DATA_W-1:0] = operand_a[DATA_W-1:0] & operand_b[DATA_W-1:0];
                     end
                     3: begin // case A | B
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] | operand_b[DATA_W-1:0];
+                        out_nxt[DATA_W-1:0] = operand_a[DATA_W-1:0] | operand_b[DATA_W-1:0];
                     end
                     4: begin // If A < B then output 1; else output 0.
-                        if((operand_a[DATA_W-1] == 1) && (operand_b[DATA_W-1] == 0))        out = 1;
-                        else if((operand_a[DATA_W-1] == 0) && (operand_b[DATA_W-1] == 1))   out = 0;
+                        if((operand_a[DATA_W-1] == 1) && (operand_b[DATA_W-1] == 0))        out_nxt = 1;
+                        else if((operand_a[DATA_W-1] == 0) && (operand_b[DATA_W-1] == 1))   out_nxt = 0;
                         else begin
-                            out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0]; // no overflow
-                            if(out[DATA_W-1])   out = 1;
-                            else                out = 0;
+                            temp1[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0]; // no overflow
+                            if(temp1[DATA_W-1])  out_nxt = 1;
+                            else                out_nxt = 0;
                         end
                     end
                     5: begin // Shift A with B bits right
-                        out[DATA_W-1:0] = $signed(operand_a[DATA_W-1:0]) >>> operand_b[DATA_W-1:0];
+                        out_nxt[DATA_W-1:0] = $signed(operand_a[DATA_W-1:0]) >>> operand_b[DATA_W-1:0];
+                    end
+                    default: begin
+                        out_nxt[2*DATA_W-1:0] = 0;
+                        shreg_nxt[2*DATA_W-1:0] = 0;
                     end
                 endcase
             end
-            // S_MULTI_CYCLE_OP : begin
-            //     case(inst)
-            //         6: begin // case A * B
-            //             // shift then add (avoid overflowing)
-            //             if(counter == 0) begin
-            //                 // step 1
-            //                 shreg_nxt = operand_b >> 1;
-            //                 if(operand_b[0]) begin
-            //                     temp = operand_a << DATA_W-1;
-            //                     shreg_nxt = shreg_nxt + temp;
-            //                 end
-            //             end
-            //             else begin
-            //                 // step 2-32
-            //                 shreg_nxt = shreg >> 1;
-            //                 if(shreg[0]) begin
-            //                     temp = operand_a << DATA_W-1;
-            //                     shreg_nxt = shreg_nxt + temp;
-            //                 end
-            //             end
-            //             // step final
-            //             if(counter == DATA_W-1) out = shreg_nxt;
-            //         end
-            //         7: begin // case A / B
-            //             // temp is the left half of shreg_nxt
-            //             if(counter == 0)    shreg_nxt[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;   // init
-            //             else                shreg_nxt[2*DATA_W-1:0] = shreg[2*DATA_W-1:0];          // the other cases
+            S_MULTI_CYCLE_OP : begin
+                temp1[2*DATA_W-1:0] = 0;
+                temp2[2*DATA_W-1:0] = 0;
+                case(inst)
+                    6: begin // case A * B
+                        // shift then add (avoid overflowing)
+                        if(counter == 0) begin
+                            // step 1
+                            temp2[2*DATA_W-1:0] = operand_b[DATA_W-1:0] >> 1;
+                            if(operand_b[0]) begin
+                                temp1[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << DATA_W-1;
+                                temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] + temp1[2*DATA_W-1:0];
+                            end
+                        end
+                        else begin
+                            // step 2-32
+                            temp2[2*DATA_W-1:0] = shreg[2*DATA_W-1:0] >> 1;
+                            if(shreg[0]) begin
+                                temp1[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << DATA_W-1;
+                                temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] + temp1[2*DATA_W-1:0];
+                            end
+                        end
+                        shreg_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
+                        // step final
+                        if(counter == DATA_W-1) out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
+                    end
+                    7: begin // case A / B
+                        // temp1 is the left half of shreg_nxt
+                        if(counter == 0)    temp2[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;   // init
+                        else                temp2[2*DATA_W-1:0] = shreg[2*DATA_W-1:0];          // the other cases
 
-            //             // step 1 - 31
-            //             if(counter < DATA_W-1) begin
-            //                 temp[DATA_W-1:0] = shreg_nxt[2*DATA_W-1:DATA_W];                            // temp = left half
-            //                 if(temp[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin                         // if left half > divisor
-            //                     temp[DATA_W-1:0] = temp[DATA_W-1:0] - operand_b[DATA_W-1:0];
-            //                     shreg_nxt[2*DATA_W-1:DATA_W] = temp[DATA_W-1:0];
-            //                     shreg_nxt[2*DATA_W-1:0] = shreg_nxt[2*DATA_W-1:0] << 1;
-            //                     shreg_nxt[0] = 1;
-            //                 end
-            //                 else begin
-            //                     shreg_nxt[2*DATA_W-1:0] = shreg_nxt[2*DATA_W-1:0] << 1;
-            //                 end
-            //             end
+                        // step 1 - 31
+                        if(counter < DATA_W-1) begin
+                            temp1[DATA_W-1:0] = temp2[2*DATA_W-1:DATA_W];                            // temp1 = left half
+                            if(temp1[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin                     // if left half > divisor
+                                temp1[DATA_W-1:0] = temp1[DATA_W-1:0] - operand_b[DATA_W-1:0];
+                                temp2[2*DATA_W-1:DATA_W] = temp1[DATA_W-1:0];
+                                temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] << 1;
+                                temp2[0] = 1;
+                            end
+                            else begin
+                                temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] << 1;
+                            end
+                            shreg_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
+                        end
 
-            //             // step 32 & final
-            //             if(counter == DATA_W-1) begin
-            //                 temp[DATA_W-1:0] = shreg_nxt[DATA_W-1:0];                                   // temp = right half
-            //                 out[DATA_W-1:0] = temp[DATA_W-1:0] << 1;          
-            //                 temp[DATA_W-1:0] = shreg_nxt[2*DATA_W-1:DATA_W];                            // temp = left half
-            //                 if(temp[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin                         // if left half > divisor
-            //                     temp[DATA_W-1:0] = temp[DATA_W-1:0] - operand_b[DATA_W-1:0];
-            //                     out[0] = 1;
-            //                 end
-            //                 out[2*DATA_W-1:DATA_W] = temp[DATA_W-1:0];
-            //             end
-            //         end
-            //         default: out = 0;
-            //     endcase
-            // end
+                        // step 32 & final
+                        if(counter == DATA_W-1) begin
+                            temp1[DATA_W-1:0] = temp2[DATA_W-1:0];                                   // temp1 = right half
+                            out_nxt[DATA_W-1:0] = temp1[DATA_W-1:0] << 1;          
+                            temp1[DATA_W-1:0] = temp2[2*DATA_W-1:DATA_W];                            // temp1 = left half
+                            if(temp1[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin
+                                temp1[DATA_W-1:0] = temp1[DATA_W-1:0] - operand_b[DATA_W-1:0];
+                                out_nxt[0] = 1;
+                            end
+                            out_nxt[2*DATA_W-1:DATA_W] = temp1[DATA_W-1:0];
+                        end
+                    end
+                    default: begin
+                        out_nxt[2*DATA_W-1:0] = 0;
+                        shreg_nxt[2*DATA_W-1:0] = 0;
+                    end
+                endcase
+            end
+            default: begin
+                out_nxt[2*DATA_W-1:0] = 0;
+                shreg_nxt[2*DATA_W-1:0] = 0;
+            end
         endcase
     end
     // Todo: output valid signal
@@ -224,6 +243,7 @@ module ALU #(
             oDone       <= 0;
             shreg       <= 0;
             counter     <= 0;
+            out         <= 0;
         end
         else begin
             state       <= state_nxt;
@@ -233,6 +253,7 @@ module ALU #(
             oDone       <= oDone_nxt;
             shreg       <= shreg_nxt;
             counter     <= counter_nxt;
+            out         <= out_nxt;
         end
     end
 
