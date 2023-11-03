@@ -43,10 +43,8 @@ module ALU #(
     reg  [         2: 0] inst, inst_nxt;
     // counter
     reg  [         4: 0] counter, counter_nxt;
-    // // shift reg
-    reg  [2*DATA_W-1: 0] shreg, shreg_nxt;
     // output
-    reg  [2*DATA_W-1: 0] out, out_nxt;               // not a real register !!
+    reg  [2*DATA_W-1: 0] out, out_nxt;
     reg  oDone, oDone_nxt;
     // multicycle temp1 reg
     reg  [2*DATA_W-1: 0] temp1, temp2;
@@ -57,7 +55,7 @@ module ALU #(
     assign o_data = out;
 
     // The above lines cannot be added !!!
-    // We've already handled input in the "load input always block"
+    // We've already handle input in the "load input always block"
     // assign i_A = operand_a;
     // assign i_B = operand_b;
     // assign i_inst = inst;
@@ -100,7 +98,6 @@ module ALU #(
     // Todo: ALU output
     always @(*) begin
         out_nxt[2*DATA_W-1:0] = 0;
-        shreg_nxt[2*DATA_W-1:0] = 0;
         case(state)
             S_ONE_CYCLE_OP   : begin
                 case(inst)
@@ -146,7 +143,6 @@ module ALU #(
                     end
                     default: begin
                         out_nxt[2*DATA_W-1:0] = 0;
-                        shreg_nxt[2*DATA_W-1:0] = 0;
                     end
                 endcase
             end
@@ -166,25 +162,25 @@ module ALU #(
                         end
                         else begin
                             // step 2-32
-                            temp2[2*DATA_W-1:0] = shreg[2*DATA_W-1:0] >> 1;
-                            if(shreg[0]) begin
+                            temp2[2*DATA_W-1:0] = out[2*DATA_W-1:0] >> 1;
+                            if(out[0]) begin
                                 temp1[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << DATA_W-1;
                                 temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] + temp1[2*DATA_W-1:0];
                             end
                         end
-                        shreg_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
+                        out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
                         // step final
                         if(counter == DATA_W-1) out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
                     end
                     7: begin // case A / B
-                        // temp1 is the left half of shreg_nxt
-                        if(counter == 0)    temp2[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;   // init
-                        else                temp2[2*DATA_W-1:0] = shreg[2*DATA_W-1:0];          // the other cases
+                        // temp2 is the left half of out
+                        if(counter == 0)    temp2[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;       // init
+                        else                temp2[2*DATA_W-1:0] = out[2*DATA_W-1:0];                // the other cases
 
                         // step 1 - 31
                         if(counter < DATA_W-1) begin
-                            temp1[DATA_W-1:0] = temp2[2*DATA_W-1:DATA_W];                            // temp1 = left half
-                            if(temp1[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin                     // if left half > divisor
+                            temp1[DATA_W-1:0] = temp2[2*DATA_W-1:DATA_W];                           // temp1 = left half
+                            if(temp1[DATA_W-1:0] >= operand_b[DATA_W-1:0]) begin                    // if left half > divisor
                                 temp1[DATA_W-1:0] = temp1[DATA_W-1:0] - operand_b[DATA_W-1:0];
                                 temp2[2*DATA_W-1:DATA_W] = temp1[DATA_W-1:0];
                                 temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] << 1;
@@ -193,7 +189,7 @@ module ALU #(
                             else begin
                                 temp2[2*DATA_W-1:0] = temp2[2*DATA_W-1:0] << 1;
                             end
-                            shreg_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
+                            out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
                         end
 
                         // step 32 & final
@@ -210,13 +206,11 @@ module ALU #(
                     end
                     default: begin
                         out_nxt[2*DATA_W-1:0] = 0;
-                        shreg_nxt[2*DATA_W-1:0] = 0;
                     end
                 endcase
             end
             default: begin
                 out_nxt[2*DATA_W-1:0] = 0;
-                shreg_nxt[2*DATA_W-1:0] = 0;
             end
         endcase
     end
@@ -241,7 +235,6 @@ module ALU #(
             operand_b   <= 0;
             inst        <= 0;
             oDone       <= 0;
-            shreg       <= 0;
             counter     <= 0;
             out         <= 0;
         end
@@ -251,7 +244,6 @@ module ALU #(
             operand_b   <= operand_b_nxt;
             inst        <= inst_nxt;
             oDone       <= oDone_nxt;
-            shreg       <= shreg_nxt;
             counter     <= counter_nxt;
             out         <= out_nxt;
         end
