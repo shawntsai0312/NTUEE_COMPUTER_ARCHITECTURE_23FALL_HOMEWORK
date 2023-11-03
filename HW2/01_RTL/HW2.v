@@ -53,9 +53,11 @@ module ALU #(
     // Todo
     assign o_done = oDone;
     assign o_data = out;
-    assign i_A = operand_a;
-    assign i_B = operand_b;
-    assign i_inst = inst;
+
+    // The above lines cannot be added !!!
+    // assign i_A = operand_a;
+    // assign i_B = operand_b;
+    // assign i_inst = inst;
     
 // Always Combination
     // load input
@@ -98,7 +100,7 @@ module ALU #(
             S_ONE_CYCLE_OP   : begin
                 case(inst)
                     0: begin // case A + B (s)
-                        out = operand_a + operand_b;
+                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] + operand_b[DATA_W-1:0];
                         if((operand_a[DATA_W-1]^operand_b[DATA_W-1])?
                             0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
                             case(out[DATA_W-1])
@@ -108,28 +110,33 @@ module ALU #(
                         end
                     end
                     1: begin // case A - B (s)
-                        out = operand_a - operand_b;
+                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0];
                         if((operand_a[DATA_W-1]==operand_b[DATA_W-1])?
-                            0:(out[DATA_W-1]==operand_a[DATA_W-1])) begin
+                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
                             case(out[DATA_W-1])
-                                1:  out = 32'h80000000;
-                                0:  out = 32'h7fffffff;
+                                0:  out = 32'h80000000;
+                                1:  out = 32'h7fffffff;
                             endcase
                         end
                     end
                     2: begin // case A & B
-                        out = 0;
+                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] & operand_b[DATA_W-1:0];
                     end
                     3: begin // case A | B
-                        out = 0;
+                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] | operand_b[DATA_W-1:0];
                     end
                     4: begin // If A < B then output 1; else output 0.
-                        out = 0;
+                        if((operand_a[DATA_W-1] == 1) && (operand_b[DATA_W-1] == 0))        out = 1;
+                        else if((operand_a[DATA_W-1] == 0) && (operand_b[DATA_W-1] == 1))   out = 0;
+                        else begin
+                            out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0]; // no overflow
+                            if(out[DATA_W-1])   out = 1;
+                            else                out = 0;
+                        end
                     end
                     5: begin // Shift A with B bits right
-                        out = 0;
+                        out[DATA_W-1:0] = $signed(operand_a[DATA_W-1:0]) >>> operand_b[DATA_W-1:0];
                     end
-                    default: out = 0;
                 endcase
             end
             S_MULTI_CYCLE_OP : begin
@@ -143,7 +150,6 @@ module ALU #(
                     default: out = 0;
                 endcase
             end
-            default : shreg_nxt = 0;
         endcase
     end
     // Todo: output valid signal
