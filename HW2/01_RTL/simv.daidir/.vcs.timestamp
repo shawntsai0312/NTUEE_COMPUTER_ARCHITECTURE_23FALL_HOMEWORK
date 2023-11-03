@@ -1,0 +1,129 @@
+0 
+34
++define+I1
++itf+/usr/cad/synopsys/vcs/2022.06/linux64/lib/vcsdp_lite.tab
++notimingcheck
++v2k
++vcsd1
++vpi
+-Mamsrun=
+-Masflags=
+-Mcc=gcc
+-Mcfl= -pipe -fPIC -O -I/usr/cad/synopsys/vcs/2022.06/include
+-Mcplusplus=g++
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mexternalobj=
+-Mldflags= -rdynamic
+-Mobjects= /usr/cad/synopsys/vcs/2022.06/linux64/lib/libvirsim.so /usr/cad/synopsys/vcs/2022.06/linux64/lib/liberrorinf.so /usr/cad/synopsys/vcs/2022.06/linux64/lib/libsnpsmalloc.so /usr/cad/synopsys/vcs/2022.06/linux64/lib/libvfs.so
+-Mout=simv
+-Msaverestoreobj=/usr/cad/synopsys/vcs/2022.06/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=/usr/cad/synopsys/verdi/2022.06/share/PLI/VCS/LINUX64/pli.a -ldl
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/usr/cad/synopsys/vcs/2022.06/include
+-Mxllcflags=
+-P
+-Xvcs_run_simv=1
+-debug_access+all
+-fsdb
+-full64
+-gen_obj
+-picarchive
+/usr/cad/synopsys/vcs/2022.06/linux64/bin/vcs1
+/usr/cad/synopsys/verdi/2022.06/share/PLI/VCS/LINUX64/verdi.tab
+../00_TB/HW2_tb.v
+HW2.v
+78
+synopsys_root=/usr/cad/synopsys/pathmill/cur
+mraarch=linux_64
+installdir=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice
+XLOCALEDIR=/usr/cad/synopsys/astro/cur/etc/locale
+XKEYSYMDB=/usr/cad/synopsys/astro/cur/etc/XKeysymDB
+XDG_SESSION_ID=64854
+XDG_RUNTIME_DIR=/run/user/1769
+VSCODE_IPC_HOOK_CLI=/run/user/1769/vscode-ipc-4073aa11-0fbc-43be-9d9f-9cd6a98b4a42.sock
+VMR_MODE_FLAG=64
+VERDI_HOME=/usr/cad/synopsys/verdi/2022.06
+VERA_HOME=/usr/cad/synopsys/vera/cur/cur
+VENDOR=unknown
+VCS_PATHMAP_PRELOAD_DONE=1
+VCS_MX_HOME_INTERNAL=1
+VCS_MODE_FLAG=64
+VCS_HOME=/usr/cad/synopsys/vcs/2022.06
+VCS_EXEC_DONE=1
+VCS_DEPTH=0
+VCS_CC=gcc
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH=linux64
+UNAME=/bin/uname
+TOOL_HOME=/usr/cad/synopsys/vcs/2022.06/linux64
+TMIARCH=RH_64
+TERM_PROGRAM_VERSION=1.83.1
+TERM_PROGRAM=vscode
+TARGET_ARCH=linux
+SYSTEMC_HOME=/usr/cad/synopsys/ccss/cur/linux/ccss/ccss_systemc
+SYN_MAN_DIR=/usr/cad/synopsys/vcs/2022.06/doc/man
+SYNTHESIS=/usr/cad/synopsys/synthesis/cur
+SYNOPSYS_TMAX=/usr/cad/synopsys/tmax/cur
+SYNOPSYS_SIM=/usr/cad/synopsys/scirocco/cur
+SYNOPSYS_SCIROCCO=/usr/cad/synopsys/scirocco/cur
+SYNOPSYS_CCSS=/usr/cad/synopsys/ccss/cur/linux/ccss
+SSH_CONNECTION=140.112.87.147 59919 140.112.20.76 22
+SSH_CLIENT=140.112.87.147 59919 22
+SSH_AUTH_SOCK=/run/user/1769/vscode-ssh-auth-sock-153772877
+SPAPI_AHDL_INCLUDE=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice/include
+SNPS_VCS_CLANG_PATH=/usr/cad/synopsys/vcs/2022.06/linux64/clang
+SNPS_SIMIF=/usr/cad/synopsys/nanosim/cur
+SNPS_PLATFORM=linux64
+SNPS_INTERNAL_VCS_LINUX_OS=linux
+SNPS_ARCH=linux
+SNPS_64=1
+SHLIB_PATH=/usr/spring_soft/verdi/cur/share/PLI/nc_xl/LINUX/xl_shared:/usr/spring_soft/verdi/cur/share/PLI/nc_xl/LINUX/nc_shared:/usr/cad/synopsys/verdi/2022.06/etc/lib/libstdc++/LINUX64/:/usr/cad/synopsys/verdi/2022.06/share/PLI/lib/LINUX64/:/usr/cad/synopsys/verdi/2022.06/share/PLI/VCS/LINUX64/:
+SELINUX_USE_CURRENT_RANGE=
+SELINUX_ROLE_REQUESTED=
+SELINUX_LEVEL_REQUESTED=
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+QT_GRAPHICSSYSTEM_CHECKED=1
+QTLIB=/usr/lib64/qt-3.3/lib
+QTINC=/usr/lib64/qt-3.3/include
+QTDIR=/usr/lib64/qt-3.3
+PRIMETIME=/usr/cad/synopsys/primetime/cur
+PRIMEPOWER=/usr/cad/synopsys/primepower/cur
+OVA_UUM=0
+OSTYPE=linux
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LEDA_PATH=/usr/cad/synopsys/leda/cur
+LC_ALL=C
+HSP_SIGMA_AMP=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice/linux64/python/AVA/ava
+HSP_HOME=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice
+HSP_GCC_VERSION=9.2.0
+HSP_GCC=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice/GNU/linux64/gcc/bin/gcc -m64 
+HOSTTYPE=x86_64-linux
+GROUP=user
+FORMALITY=/usr/cad/synopsys/formality/cur
+DDD_SESSIONS=.
+COLORTERM=truecolor
+CMIARCH=RH_64
+CDS_LOAD_ENV=CSF
+CDPL_HOME=/home/raid7_4/raid1_1/linux/synopsys/hspice/2022.06/hspice/cdpl
+CCSS_SIM_DIR=/home/raid7_2/userb10/b10176/SIM
+CCSS_KEYS=26585@lstc
+CCSS_GNUHOME=/usr/cad/synopsys/ccss/cur/linux/gnupackages
+CCSS_DEBUGGER=ddd --gdb --debugger /usr/cad/synopsys/ccss/cur/linux/ccss/bin/gdbw --directory /usr/cad/synopsys/ccss/cur/linux/ccss/ccss_systemc/include/sysc/kernel --session ccss_dbg_ddd
+ARCH=linux64
+0
+0
+4
+1698989266 HW2.v
+1697038588 ../00_TB/HW2_tb.v
+1653825972 /usr/cad/synopsys/verdi/2022.06/share/PLI/VCS/LINUX64/verdi.tab
+1654052745 /usr/cad/synopsys/vcs/2022.06/linux64/lib/vcsdp_lite.tab
+4
+1654054205 /usr/cad/synopsys/vcs/2022.06/linux64/lib/libvirsim.so
+1654053585 /usr/cad/synopsys/vcs/2022.06/linux64/lib/liberrorinf.so
+1654053489 /usr/cad/synopsys/vcs/2022.06/linux64/lib/libsnpsmalloc.so
+1654053565 /usr/cad/synopsys/vcs/2022.06/linux64/lib/libvfs.so
+1698989875 simv.daidir
+-1 partitionlib

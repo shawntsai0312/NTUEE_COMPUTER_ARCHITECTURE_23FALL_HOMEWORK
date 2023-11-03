@@ -41,9 +41,21 @@ module ALU #(
     reg  [  DATA_W-1: 0] operand_a, operand_a_nxt;
     reg  [  DATA_W-1: 0] operand_b, operand_b_nxt;
     reg  [         2: 0] inst, inst_nxt;
+    // counter
+    reg  [         4: 0] counter, counter_nxt;
+    // shift reg
+    reg  [2*DATA_W-1: 0] shreg, shreg_nxt;
+    // output
+    reg  [2*DATA_W-1: 0] out;
+    reg  oDone, oDone_nxt;
 
 // Wire Assignments
     // Todo
+    assign o_done = oDone;
+    assign o_data = out;
+    assign i_A = operand_a;
+    assign i_B = operand_b;
+    assign i_inst = inst;
     
 // Always Combination
     // load input
@@ -62,18 +74,91 @@ module ALU #(
     // Todo: FSM
     always @(*) begin
         case(state)
-            S_IDLE           :
-            S_ONE_CYCLE_OP   :
-            S_MULTI_CYCLE_OP :
+            S_IDLE           : begin
+                if(i_valid) begin
+                    if(inst<=5)   state_nxt = S_ONE_CYCLE_OP;
+                    else            state_nxt = S_MULTI_CYCLE_OP;
+                end
+                else    state_nxt = S_IDLE;
+            end
+            S_ONE_CYCLE_OP   : state_nxt = S_IDLE;
+            S_MULTI_CYCLE_OP : state_nxt = (counter == 31)? S_IDLE:S_MULTI_CYCLE_OP;
             default : state_nxt = state;
         endcase
     end
     // Todo: Counter
+    always @(*) begin
+        if(state == S_MULTI_CYCLE_OP)   counter_nxt = counter + 1;
+        else                            counter = 0;
+    end
 
     // Todo: ALU output
-    
+    always @(*) begin 
+        case(state)
+            S_ONE_CYCLE_OP   : begin
+                case(inst)
+                    0: begin // case A + B (s)
+                        out = operand_a + operand_b;
+                        if((operand_a[DATA_W-1]^operand_b[DATA_W-1])?
+                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
+                            case(out[DATA_W-1])
+                                0:  out = 32'h80000000;
+                                1:  out = 32'h7fffffff;
+                            endcase
+                        end
+                    end
+                    1: begin // case A - B (s)
+                        out = operand_a - operand_b;
+                        if((operand_a[DATA_W-1]==operand_b[DATA_W-1])?
+                            0:(out[DATA_W-1]==operand_a[DATA_W-1])) begin
+                            case(out[DATA_W-1])
+                                1:  out = 32'h80000000;
+                                0:  out = 32'h7fffffff;
+                            endcase
+                        end
+                    end
+                    2: begin // case A & B
+                        out = 0;
+                    end
+                    3: begin // case A | B
+                        out = 0;
+                    end
+                    4: begin // If A < B then output 1; else output 0.
+                        out = 0;
+                    end
+                    5: begin // Shift A with B bits right
+                        out = 0;
+                    end
+                    default: out = 0;
+                endcase
+            end
+            S_MULTI_CYCLE_OP : begin
+                case(inst)
+                    6: begin // case A * B
+                        shreg_nxt = 0;
+                    end
+                    7: begin // case A / B
+                        shreg_nxt = 0;    
+                    end
+                    default: out = 0;
+                endcase
+            end
+            default : shreg_nxt = 0;
+        endcase
+    end
     // Todo: output valid signal
-
+    always @(*) begin
+         case(state)
+            S_IDLE           : oDone_nxt = 0;
+            S_ONE_CYCLE_OP   : oDone_nxt = 1;
+            S_MULTI_CYCLE_OP : begin
+                if(counter == 31)   oDone_nxt = 1;
+                else                oDone_nxt = 0;
+            end
+            default : oDone_nxt = 0;
+        endcase
+    end
+       
     // Todo: Sequential always block
     always @(posedge i_clk or negedge i_rst_n) begin
         if (!i_rst_n) begin
@@ -81,12 +166,18 @@ module ALU #(
             operand_a   <= 0;
             operand_b   <= 0;
             inst        <= 0;
+            oDone       <= 0;
+            shreg       <= 0;
+            counter     <= 0;
         end
         else begin
             state       <= state_nxt;
             operand_a   <= operand_a_nxt;
             operand_b   <= operand_b_nxt;
             inst        <= inst_nxt;
+            oDone       <= oDone_nxt;
+            shreg       <= shreg_nxt;
+            counter     <= counter_nxt;
         end
     end
 

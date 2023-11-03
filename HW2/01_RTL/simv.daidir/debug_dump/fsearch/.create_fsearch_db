@@ -1,0 +1,9 @@
+#!/bin/sh -h 
+PYTHONHOME=/usr/cad/synopsys/vcs/2022.06/etc/search/pyh
+export PYTHONHOME
+PYTHONPATH=/usr/cad/synopsys/vcs/2022.06/linux64/lib/pylib27
+export PYTHONPATH
+LD_LIBRARY_PATH=/usr/cad/synopsys/vcs/2022.06/linux64/lib:/usr/cad/synopsys/vcs/2022.06/linux64/lib/pylib27
+export LD_LIBRARY_PATH
+/usr/cad/synopsys/vcs/2022.06/linux64/bin/vcsfind_create_index.exe  -z  "/home/raid7_2/userb10/b10176/Computer_Architecture/HW2/01_RTL/simv.daidir/debug_dump/fsearch/./idents_zGsbS4.xml.gz" "/home/raid7_2/userb10/b10176/Computer_Architecture/HW2/01_RTL/simv.daidir/debug_dump/fsearch/./idents_tapi.xml.gz" -o "/home/raid7_2/userb10/b10176/Computer_Architecture/HW2/01_RTL/simv.daidir/debug_dump/fsearch/fsearch.db_tmp"
+\mv "/home/raid7_2/userb10/b10176/Computer_Architecture/HW2/01_RTL/simv.daidir/debug_dump/fsearch/fsearch.db_tmp" "/home/raid7_2/userb10/b10176/Computer_Architecture/HW2/01_RTL/simv.daidir/debug_dump/fsearch/fsearch.db"

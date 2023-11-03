@@ -1,0 +1,5 @@
+{"vcs1":{"timestamp_begin":1698990197.420173254, "rt":0.52, "ut":0.09, "st":0.06}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1698990196.865675956}
+{"VCS_COMP_START_TIME": 1698990196.865675956}
+{"VCS_COMP_END_TIME": 1698990199.929258134}
+{"VCS_USER_OPTIONS": "../00_TB/HW2_tb.v HW2.v -full64 -R -debug_access+all +v2k +notimingcheck +define+I1"}
