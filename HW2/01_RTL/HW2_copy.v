@@ -45,7 +45,7 @@ module ALU #(
     reg  [         4: 0] counter, counter_nxt;
     // shift reg
     reg  [2*DATA_W-1: 0] shreg, shreg_nxt;
-    // output
+    // // output
     reg  [2*DATA_W-1: 0] out;
     reg  oDone, oDone_nxt;
     // multicycle temp reg
@@ -102,41 +102,41 @@ module ALU #(
         case(state)
             S_ONE_CYCLE_OP   : begin
                 case(inst)
-                    0: begin // case A + B (s)
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] + operand_b[DATA_W-1:0];
-                        if((operand_a[DATA_W-1]^operand_b[DATA_W-1])?
-                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
-                            case(out[DATA_W-1])
-                                0:  out = 32'h80000000;
-                                1:  out = 32'h7fffffff;
-                            endcase
-                        end
-                    end
-                    1: begin // case A - B (s)
-                        out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0];
-                        if((operand_a[DATA_W-1]==operand_b[DATA_W-1])?
-                            0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
-                            case(out[DATA_W-1])
-                                0:  out = 32'h80000000;
-                                1:  out = 32'h7fffffff;
-                            endcase
-                        end
-                    end
+                    // 0: begin // case A + B (s)
+                    //     out[DATA_W-1:0] = operand_a[DATA_W-1:0] + operand_b[DATA_W-1:0];
+                    //     if((operand_a[DATA_W-1]^operand_b[DATA_W-1])?
+                    //         0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
+                    //         case(out[DATA_W-1])
+                    //             0:  out = 32'h80000000;
+                    //             1:  out = 32'h7fffffff;
+                    //         endcase
+                    //     end
+                    // end
+                    // 1: begin // case A - B (s)
+                    //     out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0];
+                    //     if((operand_a[DATA_W-1]==operand_b[DATA_W-1])?
+                    //         0:(out[DATA_W-1]^operand_a[DATA_W-1])) begin
+                    //         case(out[DATA_W-1])
+                    //             0:  out = 32'h80000000;
+                    //             1:  out = 32'h7fffffff;
+                    //         endcase
+                    //     end
+                    // end
                     2: begin // case A & B
                         out[DATA_W-1:0] = operand_a[DATA_W-1:0] & operand_b[DATA_W-1:0];
                     end
                     3: begin // case A | B
                         out[DATA_W-1:0] = operand_a[DATA_W-1:0] | operand_b[DATA_W-1:0];
                     end
-                    4: begin // If A < B then output 1; else output 0.
-                        if((operand_a[DATA_W-1] == 1) && (operand_b[DATA_W-1] == 0))        out = 1;
-                        else if((operand_a[DATA_W-1] == 0) && (operand_b[DATA_W-1] == 1))   out = 0;
-                        else begin
-                            out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0]; // no overflow
-                            if(out[DATA_W-1])   out = 1;
-                            else                out = 0;
-                        end
-                    end
+                    // 4: begin // If A < B then output 1; else output 0.
+                    //     if((operand_a[DATA_W-1] == 1) && (operand_b[DATA_W-1] == 0))        out = 1;
+                    //     else if((operand_a[DATA_W-1] == 0) && (operand_b[DATA_W-1] == 1))   out = 0;
+                    //     else begin
+                    //         out[DATA_W-1:0] = operand_a[DATA_W-1:0] - operand_b[DATA_W-1:0]; // no overflow
+                    //         if(out[DATA_W-1])   out = 1;
+                    //         else                out = 0;
+                    //     end
+                    // end
                     5: begin // Shift A with B bits right
                         out[DATA_W-1:0] = $signed(operand_a[DATA_W-1:0]) >>> operand_b[DATA_W-1:0];
                     end

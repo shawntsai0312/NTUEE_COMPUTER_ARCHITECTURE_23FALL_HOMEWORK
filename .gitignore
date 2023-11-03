@@ -13,3 +13,4 @@ nWaveLog/
 csrc/
 BSSLib.lib++/
 simv
+*.svf

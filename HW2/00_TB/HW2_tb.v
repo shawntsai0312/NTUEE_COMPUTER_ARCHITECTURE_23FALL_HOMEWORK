@@ -2,7 +2,7 @@
 `define CYCLE 10.0
 `define HCYCLE (`CYCLE/2)
 `define MAX_CYCLE 10000
-`define PAT_NUM 20
+`define PAT_NUM 21
 
 `ifdef I0
     `define INPUT_A "../00_TB/pattern/I0/i_A.dat"
