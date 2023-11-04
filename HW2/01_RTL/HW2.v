@@ -55,7 +55,7 @@ module ALU #(
     assign o_data = out;
 
     // The above lines cannot be added !!!
-    // We've already handle input in the "load input always block"
+    // We've already handled input in the "load input always block"
     // assign i_A = operand_a;
     // assign i_B = operand_b;
     // assign i_inst = inst;
@@ -97,7 +97,7 @@ module ALU #(
 
     // Todo: ALU output
     always @(*) begin
-        out_nxt[2*DATA_W-1:0] = 0;
+        out_nxt[2*DATA_W-1:0] = 0; // init to avoid latch
         case(state)
             S_ONE_CYCLE_OP   : begin
                 case(inst)
