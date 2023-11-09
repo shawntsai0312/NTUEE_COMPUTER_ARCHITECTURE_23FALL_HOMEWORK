@@ -171,9 +171,9 @@ module ALU #(
                         out_nxt[2*DATA_W-1:0] = temp2[2*DATA_W-1:0];
                     end
                     7: begin // case A / B
-                        // temp2 is the left half of out
-                        if(counter == 0)    temp2[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;       // init
-                        else                temp2[2*DATA_W-1:0] = out[2*DATA_W-1:0];                // the other cases
+                        // temp2 init
+                        if(counter == 0)    temp2[2*DATA_W-1:0] = operand_a[DATA_W-1:0] << 1;       // first step, temp2 = a
+                        else                temp2[2*DATA_W-1:0] = out[2*DATA_W-1:0];                // the other cases, temp2 = out 
 
                         // step 1 - 31
                         if(counter < DATA_W-1) begin
@@ -218,8 +218,8 @@ module ALU #(
             S_IDLE           : oDone_nxt = 0;
             S_ONE_CYCLE_OP   : oDone_nxt = 1;
             S_MULTI_CYCLE_OP : begin
-                if(counter == DATA_W-1)   oDone_nxt = 1;
-                else                oDone_nxt = 0;
+                if(counter == DATA_W-1)     oDone_nxt = 1;
+                else                        oDone_nxt = 0;
             end
             default : oDone_nxt = 0;
         endcase
