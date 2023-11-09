@@ -46,7 +46,7 @@ module ALU #(
     // output
     reg  [2*DATA_W-1: 0] out, out_nxt;
     reg  oDone, oDone_nxt;
-    // multicycle temp1 reg
+    // temp reg
     reg  [2*DATA_W-1: 0] temp1, temp2;
 
 // Wire Assignments
@@ -151,7 +151,7 @@ module ALU #(
                 temp2[2*DATA_W-1:0] = 0;
                 case(inst)
                     6: begin // case A * B
-                        // shift then add (avoid overflowing)
+                        // Shift and then add (avoid overflowing)
                         if(counter == 0) begin
                             // step 1
                             temp2[2*DATA_W-1:0] = operand_b[DATA_W-1:0] >> 1;
